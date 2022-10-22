@@ -1,17 +1,28 @@
 'use strict'
 
 const Eureka = require('eureka-js-client').Eureka;
-const eurekaHost = (process.env.EUREKA_CLIENT_SERVICEURL_DEFAULTZONE || '127.0.0.1');
+const eurekaHost = (process.env.EUREKA_CLIENT_SERVICEURL_DEFAULTZONE || 'localhost');
 const eurekaPort = 8761;
-const hostName = (process.env.HOSTNAME || 'localhost')
-const ipAddr = '172.0.0.1';
+let hostName = (process.env.HOSTNAME || 'localhost')
+let ipAddr = '127.0.0.1';
 
 exports.registerWithEureka = function(appName, PORT) {
+
+    // TODO: According to stack overflow, we shouldn't be getting the IP address from DNS as it might be cached.
+    //  Need to use a different method to obtain this.'
+    //Finds and sets Hostname/IP address
+    require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+        hostName = add;
+    })
+
     const client = new Eureka({
         instance: {
             app: appName,
+            instanceId: `${ipAddr}:${appName}:${PORT}`,
             hostName: hostName,
             ipAddr: ipAddr,
+            statusPageUrl: `http://${hostName}:${PORT}`,
+            healthCheckUrl: `http://${hostName}:${PORT}/health`,
             port: {
                 '$': PORT,
                 '@enabled': 'true',
