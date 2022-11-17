@@ -38,7 +38,7 @@ exports.registerWithEureka = function(appName, PORT) {
             instance: {
                 app: appName,
                 instanceId: `${ipAddr}:${appName}:${PORT}`,
-                hostName: `${hostname}`,
+                hostName: `${ipAddr}`,
                 ipAddr: ipAddr,
                 statusPageUrl: `http://${ipAddr}:${PORT}`,
                 healthCheckUrl: `http://${ipAddr}:${PORT}/health`,
